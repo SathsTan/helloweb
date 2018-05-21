@@ -1,0 +1,256 @@
+.fonts
+{
+	font: 12px Myriad,Helvetica,Tahoma,Arial,clean,sans-serif;
+}
+
+table
+{
+	font: 12px Myriad,Helvetica,Tahoma,Arial,clean,sans-serif;
+}
+
+html {
+    height: 100%;
+    overflow:hidden;
+    width: 99%;
+}
+
+.soria{
+	width:100%;
+	height:100%;
+}
+
+.filteringSelect{
+	width: 100%;
+}
+
+.header{
+	font-weight: bold; 
+	width: 100%; 
+	height: 18px;
+	color: white; 
+	background: #1F4888;
+	padding-top:4px; 
+ 	padding-left:5px; 
+}
+
+.container{
+	width: 100%;
+    height: 120px;
+    padding: 5px;
+}
+
+.label{
+	width: 15%;
+    height: 5%;
+    float: left;
+    color:black; 
+	font-weight: bold;
+}
+
+.ruleLabel{
+	width: 20%;
+    height: 5%;
+    float: left;
+    color:black; 
+	font-weight: bold;
+}
+
+.ruleDialogLabel{
+	width: 70%;
+    height: 5%;
+    float: left;
+    color:black; 
+	font-weight: bold;
+	padding-bottom: 1em;
+}
+
+.itemLabel{	
+    float: left;
+    color:black; 
+	font-weight: bold;	
+}
+
+
+.ruleElement{
+    float: left;
+    height: 4px;
+    width: 170px;
+    padding-right: 1em;
+    padding-bottom: 1em;
+}
+
+.dialogLabel{
+	width: 50%;
+    height: 5%;
+    float: left;
+    color:black;     
+	font: 12px Myriad,Helvetica,Tahoma,Arial,clean,sans-serif;
+}
+
+.element{
+	float: left;
+    height: 5%;
+    width: 17%;
+    padding-right: 4em;
+}
+
+.finElement{
+	float: left;
+    height: 5%;
+    width: 5%;
+}
+
+.dialogElement{
+	float: left;
+    height: 50%;
+    width: 50%;
+}
+
+.display{
+	float: right;
+    height: 5%;
+    width: 15%;
+}
+
+.dijitDisabled.dijitButtonDisabled .dijitButtonNode {
+    color:Gray;
+}
+
+.dijitTabDisabled .tabLabel {
+	color: #94B4E6;
+}
+.soria .dijitTabDisabled {
+	background: #C7D6FF;
+}
+
+.soria .dijitDialog {
+    font: 12px Myriad,Helvetica,Tahoma,Arial,clean,sans-serif;
+}
+
+.grid{
+	height: 40%;
+	width: 95%;
+	float: left;
+}
+
+.dialogGrid{
+	height: 150px;
+	width: 200px;
+	float:left;
+}
+
+.dialog{
+	height: 400px;
+	width: 600px;
+	overflow:hidden;
+}
+
+.mainHeader{
+	width:"100%";
+	font-family:Verdana, Arial, sans-serif; 
+	font-weight:900; 
+	color:#1F4888; 
+	font-size:12pt;
+	align:"left";
+}
+
+#config_filter_links {
+	margin: 10px;
+	padding: 0;
+	display: inline;
+}
+
+#config_filter_links li {
+	display: inline;
+}
+
+li.activelink {
+     cursor:pointer;
+     color:blue;
+     text-decoration:underline;
+}
+
+li.activelink:hover {
+     text-decoration:none;
+     text-shadow: 1px 1px 1px #555;
+}
+
+.dijitDateTextBox .dijitArrowButtonInner {
+  background: transparent url("/datamart/resources/img/calendar_icon.png") center center no-repeat;
+  width: 18px;
+  margin: 0;
+}
+
+.contentplaceholder {
+	display:block;
+	text-align:center;  
+	font-size:90%;
+	width: 99.5%; 
+	height: 200px;
+	color: grey; 
+	background: #E3E3E3;
+	padding-top:80px; 
+ 	padding-left:10px; 
+}
+
+.soria .dijitDateTextBox .dijitButtonNode {
+	padding: 0em 0 0 0;
+}
+
+.rmdisplay {
+	display:none;
+}
+
+.contentplaceholder0 {
+	display:block;
+	text-align:center;  
+	font-size:90%;
+	width: 99.5%; 
+	color: grey; 
+	background: #E3E3E3;
+	padding-left:10px; 
+}
+.contentplaceholder1 {
+	display:block;
+	text-align:center;  
+	font-size:90%;
+	width: 99.5%; 
+	height: 85px;
+	color: grey; 
+	background: #E3E3E3;
+	padding-top:50px; 
+ 	padding-left:10px; 
+}
+
+.contentplaceholder2 {
+	display:block;
+	text-align:center;  
+	font-size:90%;
+	width: 99.5%; 
+	height: 100px;
+	color: grey; 
+	background: #E3E3E3;
+	padding-top:50px; 
+ 	padding-left:10px; 
+} 
+
+#userGridDiv{
+	height: 150px;
+}
+info {
+    color: green;
+    text-align: right;
+}
+error {
+    color: red;
+    text-align: right;
+}
+
+.gridtable {
+	display:grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.dijitMenuItem {
+	font-size: .75em;
+}
