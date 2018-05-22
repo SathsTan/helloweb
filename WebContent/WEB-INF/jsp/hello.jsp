@@ -12,7 +12,45 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.js" data-dojo-config="async: true"></scrip>
 	<link rel="stylesheet" href="/helloweb/resources/sample.css"/>
 </style>	
-	
+			<script>dojoConfig = {parseOnLoad: true, isDebug: true};</script>
+		<script src="//${cdnLoc}/dojo/${dojoVersion}/dojo/dojo.js"
+               data-dojo-config="async: true"></script>
+
+		<script>
+			
+			require(["dojo/dom", "dojo/parser", "dijit/ConfirmDialog",
+					"dijit/form/FilteringSelect", "dijit/form/Form",
+					"dojo/store/Memory", "dojox/widget/Standby",
+					"dijit/Dialog", "dijit/form/Button",
+					"dojo/dom-form","dojo/json","dijit/Tooltip",
+					"dijit/form/FilteringSelect", "dijit/form/TextBox","dijit/form/RadioButton",
+					"dijit/layout/TabContainer", "dojo/data/ItemFileReadStore", "dojo/data/ItemFileWriteStore",
+					"dojo/data/ObjectStore", "dojo/json", "dojo/on", "dijit/form/DateTextBox",
+					"dojox/grid/DataGrid", "dojox/layout/ContentPane",
+					"dojo/domReady!"]);
+
+			var return_code = 0;
+
+			var financialItemsJson;
+			var financialItemsStore;
+
+			var div_string;
+			var proc = "";
+			var metadata_array = [];
+
+			var financialTypesJson = ${financialTypesJson};
+			var financialTypesStore;
+
+			require([ "dojo/data/ItemFileReadStore" ], function(
+					ItemFileReadStore) {
+				financialTypesStore = new ItemFileReadStore({
+					data : {
+						identifier : "fntryTyCd",
+						items : financialTypesJson
+					}
+				});
+			});
+		</script>	
 	
 <script type="text/javascript">
 
