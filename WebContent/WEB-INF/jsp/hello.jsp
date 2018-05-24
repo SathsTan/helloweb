@@ -13,11 +13,10 @@
 </style>	
 		<link rel="stylesheet" href="/helloweb/resources/css/sample.css"/>
 		<script src="/helloweb/resources/js/sample.js"></script>
-		<script>dojoConfig = {parseOnLoad: true, isDebug: true};</script>
-		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.js"
-               data-dojo-config="async: true"></script>
+		
+		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.13.0/dojo/dojo.js"></script>
 
-		<script>
+		<script language="JavaScript" type="text/javascript">
 			
 			require(["dojo/dom", "dojo/parser", "dijit/ConfirmDialog",
 					"dijit/form/FilteringSelect", "dijit/form/Form",
@@ -39,7 +38,7 @@
 			var proc = "";
 			var metadata_array = [];
 
-			var financialTypesJson = ${financialTypesJson};
+			var financialTypesJson = "";
 			var financialTypesStore;
 
 			require([ "dojo/data/ItemFileReadStore" ], function(
