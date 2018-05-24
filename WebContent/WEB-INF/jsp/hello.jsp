@@ -9,11 +9,12 @@
      @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4/dijit/themes/soria/soria.css"; 
 	@import "http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojox/grid/resources/soriaGrid.css"; 
 
-	<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.js" data-dojo-config="async: true"></scrip>
-	<link rel="stylesheet" href="/helloweb/resources/sample.css"/>
+
 </style>	
-			<script>dojoConfig = {parseOnLoad: true, isDebug: true};</script>
-		<script src="//${cdnLoc}/dojo/${dojoVersion}/dojo/dojo.js"
+		<link rel="stylesheet" href="/helloweb/resources/css/sample.css"/>
+		<script src="/helloweb/resources/js/sample.js"></script>
+		<script>dojoConfig = {parseOnLoad: true, isDebug: true};</script>
+		<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojo/dojo.js"
                data-dojo-config="async: true"></script>
 
 		<script>
