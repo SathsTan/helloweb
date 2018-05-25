@@ -13,8 +13,9 @@
 </style>	
 		<link rel="stylesheet" href="/helloweb/resources/css/sample.css"/>
 		<script src="/helloweb/resources/js/sample.js"></script>
-		
-		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.13.0/dojo/dojo.js"></script>
+		<script>dojoConfig = {parseOnLoad: true, isDebug: true};</script>
+		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.13.0/dojo/dojo.js"
+			 data-dojo-config="async: true"></script>
 
 		<script language="JavaScript" type="text/javascript">
 			
