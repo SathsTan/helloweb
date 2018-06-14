@@ -1,94 +1,38 @@
 function displayFinancialItem(mess, fftype){
-	refreshMesage("fe");
-	updateMessageDiv(mess,"fe");
-			
+				
 	document.getElementById('fe_contentplaceholder1').style.display = 'none';
 		
-	var finType = dijit.byId('feDropDown').get('value');
-	
-
-	console.log(' fftype = ' + fftype);
+	var fundAcct = dijit.byId('Acct').get('value');
+	var ind;
+	console.log("mess : " + mess);
+	console.log("fftype  :  " + fftype);
+	console.log(' finalAccts = ' + fundAcct);
 	
 	if ( fftype !== '' && fftype !== null && fftype > '') {
 		finType = fftype; 	
-		dijit.byId('feDropDown').set("value",fftype);
+		dijit.byId('Acct').set("value",fftype);
 	}			
 	
-	console.log(' FT = ' + finType);
+	console.log(' FT = ' + fundAcct);
 	
-	if ( finType == '' || finType == null ) {		
-		alert(' Financial Type is required ');
+	if ( fundAcct == '' || fundAcct == null ) {		
+		alert(' Account is required ');
 		return; 
 	}	
-		
-	var appItem = dijit.byId('appItem').get('value'); 	
-	
-	console.log(' appitem = ' + appItem);
-	
-	var date1 = dijit.byId('date1').get('value');
-	var date2 = dijit.byId('date2').get('value');
-	
-	console.log(date1); console.log(date2);
-	
-	var fmtdate1 = ""; 
-	var fmtdate2 = "";
-	var compdate1 = ""; 
-	var compdate2 = ""; 	
-	
-	if ( date1 != null) {
-		fmtdate1 = date1.toISOString().slice(0,10);
-		compdate1 = date1.toISOString().slice(0,4) + date1.toISOString().slice(5,7) + date1.toISOString().slice(8,10); 
-	} 
-	
-	if (date2 != null) {
-		fmtdate2 = date2.toISOString().slice(0,10);
-		compdate2 = date2.toISOString().slice(0,4) + date2.toISOString().slice(5,7) + date2.toISOString().slice(8,10); 
-	} 
-			
-	console.log(fmtdate1); console.log(fmtdate2);
-	console.log(compdate1); console.log(compdate2);
-	
-	if ( date1 != null  && date2 != null  && compdate1 > compdate2 ) {
-		alert(' Effective From Date is greater than Effective To Date');
-		return; 
-	}	
-	
-	if (typeof Object.assign != 'function') {
-		  Object.assign = function(target) {
-		    'use strict';
-		    if (target == null) {
-		      throw new TypeError('Cannot convert undefined or null to object');
-		    }
-
-		    target = Object(target);
-		    for (var index = 1; index < arguments.length; index++) {
-		      var source = arguments[index];
-		      if (source != null) {
-		        for (var key in source) {
-		          if (Object.prototype.hasOwnProperty.call(source, key)) {
-		            target[key] = source[key];
-		          }
-		        }
-		      }
-		    }
-		    return target;
-		  };
-		}
 	
 	dojo.xhrGet({
 		
 	    // The URL of the request
-	    url: "/datamart/fe/" + "action=clickDisplayFIGrid",
+	    url: "/pasutilapp/JMServlet",
 	    handleAs: "json",
 	    content:{
-	    	financialType: "" + finType,
-	    	date1: "" + fmtdate1,
-	    	date2: "" + fmtdate2,
-	    	approveItem: "" + appItem},
+	    	fundAcct: "" + fundAcct,
+	    	ind: "" + "SRCH"
+	    	},
 	    // The success callback with result from server
-	    load: function(newContent) {
+	    load: function(data) {
 	    	
-	    	var gridData = newContent;	    	
+	    	var gridData = data;	    	
 	    	    		    	
 	    	require(["dojox/grid/EnhancedGrid",
 	    	         "dojo/data/ItemFileWriteStore",	
@@ -96,53 +40,28 @@ function displayFinancialItem(mess, fftype){
 	                 "dojo/domReady!"
 	        ], function(EnhancedGrid, ItemFileWriteStore, registry){
 	    		
-	    			var data = {
-	    					identifier: "EFF_STRT_DT",
-	    					items: gridData
+	    			var newData  = {	    		
+	    					identifier: "ID",
+	    					items: data.rows
 	    			};
-	        		var gridStore = new ItemFileWriteStore({data: data});
-	        		
-	        		var obj = gridData.reduce(function(current, next){
-	  	    		  return Object.assign({}, current, next);
-	  	    		}, {})
-
-	  	    		console.log("object => ", obj); 
-	  	    	
-	        		var arrayText = []; 
-
-	        		for (var i = 1 ; i < 18  ; i++)	{
-	        			var item = "FNTRY_PARM_TX" + i; 
-	        			if (obj[item] != null) {arrayText.push(obj[item]);}
-	        		};
-	  	    	
-	        		console.log("array = " + arrayText);
-	        		
-	        		var loopctr = arrayText.length + 1; 
-	        		console.log("loopctr = " + loopctr);
-	        		   	    		        		
+	        		var gridStore = new dojo.data.ItemFileWriteStore({data: newData});
+	        	  	   
+	        		console.log(newData);   	    		        		
 	        		var gridLayout = [];
-	        		
+	        		gridLayout.push({ name: "Sl.No", field: "ID", width: "10%" , align:"center"} );
 	        		gridLayout.push({ name: "Action", formatter: function(value, index) {
-                							var actionLinks = " ";
-                							actionLinks += "<a href='javascript:displayEditItemDialog();'>" + "Edit" + "</a>";
-                							actionLinks += "&nbsp;|&nbsp;<a href='javascript:displayApproveDialog();'>" + "Approve" + "</a>";
-                							return actionLinks; }, 
-                					  field: "Edit,Approve", width: "10%", align: "center" });
-	        		gridLayout.push({ name: "Financial Item", field: "FNTRY_TX", width: "10%" , align:"center"} ); 
-	        		gridLayout.push({ name: "Effective Date", field: "EFF_STRT_DT", width: "10%" , align:"center" } );  
-	        		gridLayout.push({ name: "Last Action", field: "NTRY_STAT_CD", width: "10%" , align:"center" } ); 		        		
-	        		gridLayout.push({ name: "User ID", field: "UPDT_USR_ID", width: "10%" , align:"center" } ); 
-	        		gridLayout.push({ name: "Last Updated Date", field: "UPDT_TS", width: "10%" , align:"center" } ); 
-	        		gridLayout.push({ name: "Type Code", field: "FNTRY_TY_CD", width: "10%" , align:"center", hidden:true } ); 
-	        			        		
-	        		for (var i = 1 ; i < loopctr  ; i++)	{
-	        			var k = i - 1; 	        				        			
-	        			gridLayout.push({ name: arrayText[k] , field: "MAN_NTRY_AM" +i, width: "10%" , align:"center" } ); 	        			
-	        		 	gridLayout.push({ name: "Parm Code", field: "FNTRY_PARM_TY_CD" +i , width: "5%" , align:"center", hidden:true } ); 
-	        		 	gridLayout.push({ name: "Parm Text", field: "FNTRY_PARM_TX" +i , width: "5%" , align:"center", hidden:true } ); 
-	        		}; 
+						var actionLinks = " ";
+						actionLinks += "<a href='javascript:displayEditItemDialog();'>" + "Edit" + "</a>";
+						actionLinks += "&nbsp;|&nbsp;<a href='javascript:displayApproveDialog();'>" + "Delete" + "</a>";
+						return actionLinks; }, 
+				  field: "Edit,Approve", width: "20%", align: "center" });  
 	        		
-	        		gridLayout.push({ name: "Comment", field: "CMNT_TX", width: "10%" , align:"center" } ); 
+	        		gridLayout.push({ name: "Funding Account", field: "FUND_ACCT", width: "20%" , align:"center"} ); 
+	        		gridLayout.push({ name: "Trading Account", field: "TRADE_ACCT", width: "20%" , align:"center" } );  
+	        		gridLayout.push({ name: "Allocation Percentage", field: "ACCT_PER", width: "15%" , align:"center" } ); 		        		
+	        		gridLayout.push({ name: "Account Title", field: "ACCT_TITLE", width: "15%" , align:"center" } ); 
+	        		gridLayout.push({ name: "Rec Indicator", field: "IND", width: "15%" , align:"center" } ); 
+	        		 
 	        		
 	        		var pgrid = registry.byId('itemGrid'); console.log("pgrid = " + pgrid);
 	                if (pgrid) {
@@ -153,12 +72,21 @@ function displayFinancialItem(mess, fftype){
 	        		
 	                var pp2 = registry.byId('itemGrid'); console.log("pp2 = " + pp2);
 	                
-	    	        grid = new dojox.grid.EnhancedGrid({
+	    	    /*    grid = new dojox.grid.EnhancedGrid({
 	    	        	id: "itemGrid",
 	    	        	width: "80%",
 	    	            store: gridStore,
 	    	            structure: gridLayout,  
-	    	        });
+	    	        }); */
+	                
+	                grid = new dojox.grid.EnhancedGrid({
+	                    id: "grid",
+	                    jsid: "grid",
+	                    store: gridStore,
+	                    structure: gridLayout,
+	                    width: "80%"	                    
+	                }, dojo.byId("itemGridDiv"));
+	    //grid.startup();
 	        		
 	    	        var qq = dijit.byId('itemGridDiv');console.log("qq = " + qq);
 	    	        
@@ -172,7 +100,7 @@ function displayFinancialItem(mess, fftype){
 	    	        
 	                var qq2 = dijit.byId('itemGridDiv');console.log("qq2 = " + qq2);*/
 	                
-	        		grid.placeAt("itemGridDiv");
+	        	//	grid.placeAt("itemGridDiv");
 	        		
 	        		console.log("one = " );
 	        		
@@ -198,58 +126,7 @@ function refreshMesage(obj){
 }
 
 function updateMessageDiv(mess,obj){
-	require(["dojo/dom", 
-				"dojo/domReady!" ], function(dom) {
-	var resultDiv = dom.byId("message"+obj);
-	if(mess=="OK"){
-		var myhtml="";
-		myhtml += '<table> <tr ><td ><img src="/datamart/resources/img/info.gif"></td>'; 
-		myhtml += '<td > <b>   Data Saved Successfully  !!!!   </b></td>';
-		resultDiv.innerHTML+=myhtml;	
-	}
-	else if(mess=="ERROR"){
-		var myhtml="";
-		myhtml += '<table> <tr ><td ><img src="/datamart/resources/img/stop.gif"></td>'; 
-		myhtml += '<td > <b>  Data Save Error   !!!!   </b></td>';
-		resultDiv.innerHTML+=myhtml;		
-	}
-	else if(mess=="ERROR1"){
-		var myhtml="";
-		myhtml += '<table> <tr ><td ><img src="/datamart/resources/img/stop.gif"></td>'; 
-		myhtml += '<td > <b>  Data Save Error - Duplicate Key  !!!!   </b></td>';
-		resultDiv.innerHTML+=myhtml;		
-	}
-	else if(mess=="DOK"){		
-		var myhtml="";
-		myhtml += '<table> <tr ><td ><img src="/datamart/resources/img/info.gif"></td>'; 
-		myhtml += '<td > <b>  Data Deleted Successfully   !!!!   </b></td>';
-		resultDiv.innerHTML+=myhtml;		
-	}
-	else if(mess=="DKO"){
-		var myhtml="";
-		myhtml += '<table> <tr ><td ><img src="/datamart/resources/img/stop.gif"></td>'; 
-		myhtml += '<td > <b>  Data Delete Error  !!!!  </b></td>';
-		resultDiv.innerHTML+=myhtml;		
-	}
-	else if(mess=="ADD"){
-		var myhtml="";
-		myhtml += '<table> <tr ><td ><img src="/datamart/resources/img/info.gif"></td>'; 
-		myhtml += '<td > <b>   Data Added Successfully  !!!!   </b></td>';
-		resultDiv.innerHTML+=myhtml;
-	}
-	else if(mess=="APR"){
-		var myhtml="";
-		myhtml += '<table> <tr ><td ><img src="/datamart/resources/img/info.gif"></td>'; 
-		myhtml += '<td > <b>   Data Approved/Rejected Successfully  !!!!   </b></td>';
-		resultDiv.innerHTML+=myhtml;
-	}
-	else if(mess=="U"){
-		var myhtml="";
-		myhtml += '<table> <tr ><td ><img src="/datamart/resources/img/info.gif"></td>'; 
-		myhtml += '<td > <b>   Data Updated Successfully  !!!!   </b></td>';
-		resultDiv.innerHTML+=myhtml;
-	}
-	});	
+
 }
 
 function displayEditItemDialog(){
@@ -686,84 +563,62 @@ function cancelDialog4(){
 function addFinancialItemDialog(){
 		
 	itemDialogDiv1.show();
+//	var selected_index = grid.focus.rowIndex;
+	var selected_item = grid.getItem(0);
+	
+	
+	dijit.byId("fundAcct").set('value', grid.store.getValue(selected_item, "FUND_ACCT"));
+//	dijit.byId("dateDg4").set('value', grid.store.getValue(selected_item, "EFF_STRT_DT"));  	
+	
 }
 
 function addDialog1(){
 	
-	require(["dojo/dom"], function(dom){
-		dojo.forEach(dijit.findWidgets(dom.byId('varlabelhtml')), function(w) {
-	        w.destroyRecursive();
-	        });
-	});
-		
-	var v0grid = dijit.byId("varlabelhtml"); 
-	if (v0grid) {
-		v0grid.destroy();
-	}
 	
-	var v1grid = dijit.byId("labelctr"); 
-	if (v1grid) {
-		v1grid.destroy();
-	}
+	var i = grid.rowCount + 1;//grid.store.newItem({});
 	
-	for (var i = 0 ; i < 18  ; i++)	{
-		if (dijit.byId("parmid"+i) != null ) {
-			var v1agrid = dijit.byId("parmid"+i); console.log("v1agrid = " + v1agrid);
-			if (v1agrid) { v1agrid.destroy(); }
-		}
-		if (dijit.byId("parmtext"+i) != null ) {
-			var v1bgrid = dijit.byId("parmtext"+i); console.log("v1bgrid = " + v1bgrid);
-			if (v1bgrid) { v1bgrid.destroy(); }
-		}
-		if (dijit.byId("parmty"+i) != null ) {
-			var v1cgrid = dijit.byId("parmty"+i); console.log("v1cgrid = " + v1cgrid);
-			if (v1cgrid) { v1cgrid.destroy(); }
-		}	
-	}
+	var fAcct = dijit.byId('fundAcct').get('value');
+	var tAcct = dijit.byId('tradeAcct').get('value');
+	var alloc = dijit.byId('percent').get('value');
+	var title = ""; 
+    var Id = grid.store.recordCount;
+    
+	var myNewItem = {
+		"ID": (i), 
+		"Edit,Approve": function() {	
+			var actionLinks = " ";
+			actionLinks += "<a href='javascript:displayEditItemDialog();'>" + "Edit" + "</a>";
+			actionLinks += "&nbsp;|&nbsp;<a href='javascript:displayApproveDialog();'>" + "Delete" + "</a>";
+			return actionLinks; },
+		"FUND_ACCT": fAcct, 
+		"TRADE_ACCT": tAcct,
+		"ACCT_PER": alloc,
+		"ACCT_TITLE": "",
+		"IND": "I"
+	};
+	grid.store.newItem(myNewItem);
+    /* Insert the new item into the store:
+    store.newItem(myNewItem);
+
+	grid.store.setValue(i, "ID", 3);
+	grid.store.setValue(i, "Edit,Approve", function() {
+		var actionLinks = " ";
+		actionLinks += "<a href='javascript:displayEditItemDialog();'>" + "Edit" + "</a>";
+		actionLinks += "&nbsp;|&nbsp;<a href='javascript:displayApproveDialog();'>" + "Delete" + "</a>";
+		return actionLinks; });
+	grid.store.setValue(i, "FUND_ACCT", fAcct);
+	grid.store.setValue(i, "TRADE_ACCT", tAcct);
+	grid.store.setValue(i, "ACCT_PER", alloc);
+	grid.store.setValue(i, "ACCT_TITLE", "");
+	grid.store.setValue(i, "IND", "I");
 	
-	var myNode = document.getElementById("varlabelhtml");
-	while (myNode.firstChild) {
-	  	    myNode.removeChild(myNode.firstChild);
-	}
+	grid.store.save(); */
 	
-	var finType11 = dijit.byId('feDropDownDg').get('value');
-	
-	console.log("fin11 = " + finType11);
-	
-	var finType12 = dijit.byId('feDropDownDg').get('displayedValue');
-	
-	console.log("fin12 = " +finType12);
-	
-	dojo.byId("fecode1").value = finType11; 	
-	dojo.byId("fetype1").value = finType12; 
-	
-	dojo.xhrGet({
-		
-		url: "/datamart/fe/" + "action=clickDisplayFIParm",
-	    handleAs: "text",
-	    content:{
-	    	financialType: "" + finType11 }, 
-	   	   
-	    // The success callback with result from server
-	    load: function(newContent) {
-	    	
-	    console.log(newContent);	
-	    console.log(JSON.stringify(newContent));
-	    
-	    dojo.byId("varlabelhtml").innerHTML = newContent; 
-	    
-	    require(["dojo/parser"], function(parser){
-	    	parser.parse("varlabelhtml");
-	    	});   
-	    },
-	    // The error handler
-	    error: function() {
-	        alert("error occurred during display new financial manual parm entry !!!!!!!!!!!");
-	    }
-	});
-			
-	itemDialogDiv2.show();
-	
+	itemDialogDiv1.hide();
+	dijit.byId('fundAcct').set('value', null);
+	dijit.byId('tradeAcct').set('value', null);
+	dijit.byId('percent').set('value', null);
+
 }
 
 function addDialog2(){
@@ -821,6 +676,38 @@ function addDialog2(){
 	itemDialogDiv2.hide();
 }
 
+function changeFilter()
+{
+var filterValue;
+	
+var filterValue;
+
+filterValue = document.getElementById("selItem").value;
+if(filterValue=="Account"){			
+	dijit.byId("Acct").domNode.style.display = "inline-block";
+	dijit.byId("Acct").domNode.value="";
+	dijit.byId("ibd").domNode.style.display = "none";
+	dijit.byId("ofc").domNode.style.display = "none";
+	dijit.byId("ips").domNode.style.display = "none";
+	dojo.byId("id1").style.display = "none";
+	dojo.byId("id2").style.display = "none";	
+		
+}
+else{			
+	dijit.byId("Acct").domNode.style.display = "none";
+	dijit.byId("ibd").domNode.style.display = "inline-block";
+	dijit.byId("ofc").domNode.style.display = "inline-block";
+	dijit.byId("ips").domNode.style.display = "inline-block";
+	dojo.byId("id1").style.display = "inline-block";
+	dojo.byId("id2").style.display = "inline-block";	
+	dijit.byId("ibd").domNode.value="";
+	dijit.byId("ofc").domNode.value="";
+	dijit.byId("ips").domNode.value="";
+}
+
+
+
+}
 
 function getCodeValues(){
 	
@@ -849,11 +736,12 @@ function getCodeValues(){
 
 function clearAllFinancialItem(){	
 
-	dijit.byId('feDropDown').set("value", null);
-	dijit.byId('appItem').reset();
-	dijit.byId('date1').set("value", null);
-	dijit.byId('date2').set("value", null);
+	dijit.byId("Acct").set('value', "");
+	dijit.byId("ibd").set('value', "");
+	dijit.byId("ofc").set('value', "");
+	dijit.byId("ips").set('value', "");
 	
+		
 	refreshMesage("fe");
 	
 	require(["dijit/registry"], function(registry){
