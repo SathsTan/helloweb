@@ -1,24 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-<title>hellloweb</title>
+<title>Journal Allocation</title>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+       
 
-<style type="text/css">	
-    
-     @import "http://ajax.googleapis.com/ajax/libs/dojo/1.4/dijit/themes/soria/soria.css"; 
-	@import "http://ajax.googleapis.com/ajax/libs/dojo/1.4/dojox/grid/resources/soriaGrid.css"; 
-
-
-</style>	
-		<link rel="stylesheet" href="/helloweb/resources/css/sample.css"/>
-		<script src="/helloweb/resources/js/sample.js"></script>
-		<script>dojoConfig = {parseOnLoad: true, isDebug: true};</script>
-		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.13.0/dojo/dojo.js"
-			 data-dojo-config="async: true"></script>
-
-		<script language="JavaScript" type="text/javascript">
+		
+		<link rel="stylesheet" href="https://qa-www.pllcfiles.inautix.com/dojo/1.10.6.1/dijit/themes/soria/soria.css"/>
+		<link rel="stylesheet" href="https://qa-www.pllcfiles.inautix.com/dojo/1.10.6.1/dojox/grid/resources/soriaGrid.css"/>		
+		<link rel="stylesheet" href="https://qa-www.pllcfiles.inautix.com/dojo/1.10.6.1/dojox/grid/enhanced/resources/EnhancedGrid_rtl.css"/>				
+		
+		<link rel="stylesheet" href="resources/css/JMAllocation.css"/> 		
+		<script src="resources/js/JMAllocation.js" data-dojo-config="async: true"></script>
 			
+		<script>dojoConfig = {parseOnLoad: true, isDebug: true};</script>
+		<script src="https://qa-www.pllcfiles.inautix.com/dojo/1.10.6.1/dojo/dojo.js" data-dojo-config="async: true"></script>	
+				
+		<script>			
+	      		
 			require(["dojo/dom", "dojo/parser", "dijit/ConfirmDialog",
 					"dijit/form/FilteringSelect", "dijit/form/Form",
 					"dojo/store/Memory", "dojox/widget/Standby",
@@ -29,43 +31,20 @@
 					"dojo/data/ObjectStore", "dojo/json", "dojo/on", "dijit/form/DateTextBox",
 					"dojox/grid/DataGrid", "dojox/layout/ContentPane",
 					"dojo/domReady!"]);
-
-			var return_code = 0;
-
-			var financialItemsJson;
-			var financialItemsStore;
-
-			var div_string;
-			var proc = "";
-			var metadata_array = [];
-
-			var financialTypesJson = "";
-			var financialTypesStore;
-
-			require([ "dojo/data/ItemFileReadStore" ], function(
-					ItemFileReadStore) {
-				financialTypesStore = new ItemFileReadStore({
-					data : {
-						identifier : "fntryTyCd",
-						items : financialTypesJson
-					}
-				});
-			});
 		</script>	
 	
-<script type="text/javascript">
+
+<script type="text/javascript" defer="defer">
 
 
-
-
-</script>	
 	
-	
+
+</script>
 </head>
-<body style="width:100%;">
-
+<body style="width:100%" class="soria">	
+<div >	    
 <br />
-<div id="messagefe"  align="left"></div>
+<div id="messagefe"  align="left" style="padding-left: 2em;"></div>
 	<br/>
 <div id="fe_header" class="header">
 	<div>
@@ -73,125 +52,116 @@
 	</div>
 </div>
 <br />
-
-<table>
+<table style="padding-left: 2em;">
 	<tr>
+	
 		<td>
-			<div id="fe_lable" class="itemLabel" >
-				Financial Entry Type:
-			</div>
+			<div id="app_item" class="itemLabel" >Search By       </div>
 		</td>
 		<td>
-			<div id="div_fe_id3" class="dialogElement" style="float: left; padding-right: 2em;">
-			  	<input data-dojo-type="dijit/form/FilteringSelect"
-			    data-dojo-props="store:financialTypesStore, searchAttr:'fntryTx'"
-			    name="feDropDown"
-			    id="feDropDown"
-			    data-dojo-id="feDropDown"
-			    />	    
-			</div>	
-		</td>
-		<td>
-			<div class="itemLabel" >Approved Item: </div>
-		</td>
-		<td>
-			<div class="dialogElement">
-	 			<select data-dojo-type="dijit/form/FilteringSelect" id="appItem" name="appItem">
-				    <option value="" selected> ALL </option>
-				    <option value="P"> Pending </option>
-				    <option value="A"> Approved </option>
-				    <option value="R"> Rejected </option>
+			<div class="dialogElement" style="padding-right: 0em;">
+	 			<select data-dojo-type="dijit/form/FilteringSelect" id="selItem" name="selItem" onchange="changeFilter();">
+				    <option value="ACCT" selected="selected"> Account </option>
+				    <option value="OFFC"> IBD-Office-IP </option>				    
 				</select>
 			</div>
-		</td>				
-	</tr>
-</table>
-<br />
-<table>		
-	<tr>
+		</td>		
+		
 		<td>
-			<div class="itemLabel" >Effective Date From: </div>
-		</td>
-		<td>
-			<div style="float: left; padding-right: 2em;">
-				<input type="text" name="date1" id="date1"
-				data-dojo-type="dijit/form/DateTextBox" />
+			<div style="float: left; padding-right: 0em;" id="search1">
+				<input type="text" name="Acct" id="Acct" data-dojo-type="dijit/form/TextBox" />
 			</div>
 		</td>
 		<td>
-			<div class="itemLabel" >Effective Date To:</div>
-		</td>
-		<td>
-			<div style="float: left;">
-				<input type="text" name="date2" id="date2"
-				data-dojo-type="dijit/form/DateTextBox" />
+			<div style="float: left; padding-right: 2em;" id="search2">
+				<input type="text" maxlength="3" size="4" name="ibd" id="ibd" data-dojo-type="dijit/form/TextBox" style="display: none; width: 50px;"/>
+				<span id="id1" style="display: none;">-</span><input type="text" maxlength="3" size="4" name="ofc" id="ofc" data-dojo-type="dijit/form/TextBox" style="display: none; width: 50px; "/>
+				<span id="id2" style="display: none;">-</span><input type="text" maxlength="3" size="4" name="ips" id="ips" data-dojo-type="dijit/form/TextBox" style="display: none; width: 50px;"/>
 			</div>
 		</td>		
-	</tr>	
+	</tr>
 	<tr>
 		<td colspan="6"></td>
 		<td colspan="2">
 			<button data-dojo-type="dijit/form/Button" type="button"
-			id="displayFeButton" onClick="displayFinancialItem()">Display</button>	
+			id="displayFeButton" onclick="displayFinancialItem()">Display</button>	
 			<button data-dojo-type="dijit/form/Button" type="button"
-			id="clearAllFeButton" onClick="clearAllFinancialItem()">Clear All</button>	
+			id="clearAllFeButton" onclick="clearAllFinancialItem()">Clear All</button>	
 		</td>
 		<td>
 		</td>
 	</tr>
+</table>
+<br />
+<table>		
+	
+	
 </table>			
-
 <br/>
-
 <div>
-	<div id="add_button" >
-		<button data-dojo-type="dijit/form/Button" type="button"
-			id="addButton" onClick="addFinancialItemDialog()">Add New Financial Item</button>
+	<div id="add_button" style="padding-left: 2em;">
+		
+					<button data-dojo-type="dijit/form/Button" type="button"
+						id="addButton" onclick="addFinancialItemDialog()">Add New Allocation</button>
+			
 	</div>
 </div>	
-
 <br/>
-<br/>
-<br/>
-
-<div id="fe_header2" class="header">
+<div id="fe_header2" class="header" >
 	<div>
-		Financial Items
+		Allocation Details
 	</div>
 </div>
-
 <div id="fe_contentplaceholder1" class="contentplaceholder">
 	<div>
-		Select Financial Entry Type to display Financial Items
+		Allocation Update Details
 	</div>
 </div>
-
 <br/>
-
-<div id="itemGridDiv" data-dojo-id="itemGridDiv"  class="grid">
+<div id="itemGridDiv"  class="grid">
 </div>
-
 <br />
-
 <div style="height: 5%; width: 55%; float: left">
 </div>
 
 <div data-dojo-type="dijit/Dialog" data-dojo-id="itemDialogDiv1" title="Add Financial Manual Entry" class="dialog" id="itemDialogDiv1">
-	<div class="dijitDialogPaneContentArea" >
+	<div class="dijitDialogPaneContentArea" padding-left="2em">
     	<div >
-			<div class="dialogLabel">Financial Entry Type:</div>
+			<div class="dialogLabel">Funding Account :</div>
 			<div class="dialogElement">
-			  	<input data-dojo-type="dijit/form/FilteringSelect"
-			    data-dojo-props="store:financialTypesStore, searchAttr:'fntryTx'"
-			    name="feDropDownDg"
-			    id="feDropDownDg"
-			    data-dojo-id="feDropDownDg"
-			    class="filteringSelect" />	    
+			  	<input data-dojo-type="dijit/form/TextBox" maxlength="9" name="fundAcct" id="fundAcct" data-dojo-id="fundAcct" class="filteringSelect" />	    
 			</div>				
 		</div>		
     </div>
-        
-    <br><br><br><br><br><br><br>
+    <br/>
+    <div class="dijitDialogPaneContentArea" >
+    	<div >
+			<div class="dialogLabel">Trading Account :</div>
+			<div class="dialogElement">
+			  	<input data-dojo-type="dijit/form/TextBox" maxlength="9" name="tradeAcct" id="tradeAcct" data-dojo-id="tradeAcct" class="filteringSelect" />	    
+			</div>				
+		</div>		
+    </div>
+    
+    <br/>
+    <div class="dijitDialogPaneContentArea" >
+    	<div >
+			<div class="dialogLabel">Allocation Percentage :</div>
+			<div class="dialogElement">
+			  	<input data-dojo-type="dijit/form/TextBox" name="percent" id="percent" data-dojo-id="tradeAcct" class="filteringSelect" />	    
+			</div>				
+		</div>		
+    </div>
+    <br/>
+    <div class="dijitDialogPaneContentArea" >
+    	<div >
+			<div class="dialogLabel">Account Title : </div>
+			<div class="dialogElement">
+			  	<input data-dojo-type="dijit/form/TextBox" name="AcctTitle" id="AcctTitle" data-dojo-id="tradeAcct" class="filteringSelect" disabled="disabled"/>	    
+			</div>				
+		</div>		
+    </div>
+    <br/><br/><br/><br/>
 	
     <div class="dijitDialogPaneActionBar" >
         <button data-dojo-type="dijit/form/Button" type="button" onClick="addDialog1()"
@@ -201,148 +171,6 @@
     </div>
 </div>
 
-<div data-dojo-type="dijit/Dialog" data-dojo-id="itemDialogDiv2" title="Add Financial Manual Entry " class="dialog" id="itemDialogDiv2">
-	<div class="dijitDialogPaneContentArea" >
-    	<div >
-			<div class="dialogLabel">Financial Entry Type:</div>
-			<div class="dialogElement">
-	        	<input type="text" data-dojo-type="dijit/form/TextBox" name="fetype1" id="fetype1" >
-	        </div>	
-	        <div class="dialogElement">
-	        	<input type="hidden" data-dojo-type="dijit/form/TextBox" name="fecode1" id="fecode1" >
-	        </div>		
-		</div>
-		 <br/>
-		 
-		<div >
-	        <div class="dialogLabel">Effective Date: </div>
-	        <div class="dialogElement">
-	        	<input type="text" data-dojo-type="dijit/form/DateTextBox" value="now" name="dateDg" id="dateDg" >
-	        </div>		          	
-	    </div> 
-	     <br/>
-	     
-	    <div id="varlabelhtml">
-        </div> 
-         <br/>
-                   
-        <div >
-	        <div class="dialogLabel">Comment: </div>
-	        <div class="dialogElement">
-	        	<input data-dojo-type="dijit/form/TextBox" name="commentDg" id="commentDg" >
-	        </div>
-        </div>
-         <br/>
-         
-    </div>
-    
-    <br><br><br><br><br><br><br>
-	
-    <div class="dijitDialogPaneActionBar" >
-        <button data-dojo-type="dijit/form/Button" type="button" onClick="addDialog2()"
-                id="addDg2">Add</button>
-        <button data-dojo-type="dijit/form/Button" type="button" onClick="cancelDialog2()"
-                id="cancelDg2">Cancel</button>                               
-    </div>
 </div>
-
-<div data-dojo-type="dijit/Dialog" data-dojo-id="itemDialogDiv3" title="Edit Financial Manual Entry " class="dialog" id="itemDialogDiv3">
-	<div class="dijitDialogPaneContentArea" >
-    	<div class="gridtable">
-			<div class="dialogLabel">Financial Entry Type:</div>
-			<div class="dialogElement">
-	        	<input type="text" data-dojo-type="dijit/form/TextBox" name="feType3" id="feType3" >
-	        </div>			
-		</div>
-		<br/>
-		
-		<div class="gridtable">
-	        <div class="dialogLabel">Effective Date: </div>
-	        <div class="dialogElement">
-	        	<input type="text" data-dojo-type="dijit/form/TextBox" name="dateDg3" id="dateDg3" >
-	        </div>		          	
-	    </div> 
-	    <br/>
-	    
-	    <div id="varpara" class="gridtable"> 
-		</div>	    
-        <br/>
-            
-        <div class="gridtable" >
-	        <div class="dialogLabel">Comment: </div>
-	        <div class="dialogElement">
-	        	<input data-dojo-type="dijit/form/TextBox" name="commentDg3" id="commentDg3" >
-	        </div>
-        </div>
-        <br/>
-        
-    </div> 
-    
-    <div class="dialogElement">
-	     	<input type="hidden" data-dojo-type="dijit/form/TextBox" name="hidKey" id="hidKey" >	   
-	</div> 
-	
-	<br/>
-	<br/>
-	<br/> 
-         	
-    <div class="dijitDialogPaneActionBar" >
-        <button data-dojo-type="dijit/form/Button" type="button" onClick="editDialog3()"
-                id="editDg3">Save</button>
-        <button data-dojo-type="dijit/form/Button" type="button" onClick="cancelDialog3()"
-                id="cancelDg3">Cancel</button>                               
-    </div>
-</div>
-
-<div data-dojo-type="dijit/Dialog" data-dojo-id="itemDialogDiv4" title="Approve Financial Manual Entry" class="dialog" id="itemDialogDiv4">
-	<div class="dijitDialogPaneContentArea" >
-    	<div class="gridtable">
-			<div class="dialogLabel">Financial Entry Type:</div>
-			<div class="dialogElement">
-	        	<input type="text" data-dojo-type="dijit/form/TextBox" name="feType4" id="feType4" >
-	        </div>			
-		</div>
-		<br/>
-		
-		<div class="gridtable">
-	        <div class="dialogLabel">Effective Date: </div>
-	        <div class="dialogElement">
-	        	<input type="text" data-dojo-type="dijit/form/TextBox" name="dateDg4" id="dateDg4" >
-	        </div>		          	
-	    </div> 
-	    <br/>
-	    
-	    <div id="var4para" class="gridtable"> 
-		</div>	    
-        <br/>
-            
-        <div class="gridtable" >
-	        <div class="dialogLabel">Comment: </div>
-	        <div class="dialogElement">
-	        	<input data-dojo-type="dijit/form/TextBox" name="commentDg4" id="commentDg4" >
-	        </div>
-        </div>
-        <br/>
-        
-    </div> 
-    
-    <div class="dialogElement">
-	     	<input type="hidden" data-dojo-type="dijit/form/TextBox" name="hidKey4" id="hidKey4" >	     	
-	</div>  
-	
-	<br/>
-	<br/>
-	<br/>
-         	
-    <div class="dijitDialogPaneActionBar" >
-        <button data-dojo-type="dijit/form/Button" type="button" onClick="approveItem('A')"
-                id="approveDg4">Approve</button>
-        <button data-dojo-type="dijit/form/Button" type="button" onClick="approveItem('R')"
-                id="rejectDg4">Reject</button>        
-        <button data-dojo-type="dijit/form/Button" type="button" onClick="cancelDialog4()"
-                id="cancelDg4">Cancel</button>                               
-    </div>
-</div>
-
 </body>
 </html>
