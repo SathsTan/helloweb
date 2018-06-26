@@ -1,18 +1,167 @@
-function displayFinancialItem(mess, fftype){
+
+/*
+{"rows":[{"ID":1,"ACCT_TITLE":"GEOFFREY MONROE DAVIS           ","FUND_ACCT":"AAD001001","TRADE_ACCT":"AAD001027","IND":"N","ACCT_PER":"50.000000000"},{"ID":2,"ACCT_TITLE":"JAMES KERN                      ","FUND_ACCT":"AAD001001","TRADE_ACCT":"AAD001019","IND":"N","ACCT_PER":"50.000000000"}]}
+*/
+var grid;
+var deletedAllocations = [];
+var Accts = [];
+var gridStore = "";
+i=0;
+
+function displayFundingItem(mess, fftype)
+{
+	var selectedItem = dijit.byId("selItem").get('value');
+	refreshMesage("fe");
+	if(selectedItem=="ACCT"){
+		var fundAcct = dijit.byId('Acct').get('value');
+		displayAllocationItem(fundAcct);
+	}
+	else
+	{
+		displayFundingAccounts();
+	}
+}
+
+function displayFundingAccounts()
+{
+	gridStore = "";	
+	grid = "";
+	document.getElementById('fe_contentplaceholder1').style.display = 'none';
+	var corrId = dijit.byId('ibd').get('value');
+	var office = dijit.byId('ofc').get('value');
+	var rrNum = dijit.byId('ips').get('value');
+	var fundAcct ="";
+		
+	updateCaptionDiv("Funding Accounts");
+	
+	var funcName ="FUND";
+	var gridLayout = [];				
+	gridLayout.push({ name: "Sl.No", field: "ID", width: "10%" , align:"center"} );
+	gridLayout.push({ name: "Funding Account", field: "FUND_ACCT", width: "20%" , align:"center", editable: false} );
+	gridLayout.push({ name: "Registration Code", field: "REG_CODE", width: "20%" , align:"center", editable: false} );
+	gridLayout.push({ name: "Account Type", field: "ACCT_TYPE", width: "20%" , align:"center", editable: false} );
+	gridLayout.push({ name: "Account Short Name", field: "ACCT_SHRT", width: "20%" , align:"center", editable: false} );
+	gridLayout.push({ name: "Registration Title", field: "REG_TITL", width: "30%" , align:"center", editable: false} );
+	
+	url='JMServlet?fundAcct=&ind='+ funcName +  '&corrId=' + corrId + '&office=' + office + '&rrNum=' + rrNum;			
+		
+		
+	
+	dojo.xhrGet({
+		
+	    // The URL of the request
+	    url: "/pasutilapp/JMServlet",
+	    handleAs: "json",
+	    content:{
+	    	fundAcct: "" + fundAcct,
+	    	ind: "" + funcName,
+	    	corrId: "" + corrId,
+	    	office: "" + office,
+	    	rrNum: "" + rrNum
+	    	},
+	    
+	    // The success callback with result from server
+	    load: function(data) {
+	    	
+	    	var gridData = data;	    	
+	    	i=i+1;    		    	
+	    	require(["dojox/grid/EnhancedGrid",
+	    	         "dojo/data/ItemFileWriteStore",	
+	    	         "dijit/registry",
+	                 "dojo/domReady!"
+	        ], function(EnhancedGrid, ItemFileWriteStore, registry){
+	    			    		
+	    			var newData  = {	    		
+	    					identifier: "ID",
+	    					items: data.rows
+	    			};
+	        		//if(newData.items.length()>0){
+	        			
+	        		//}else{
+	        	//		 dijit.byId('messagefe').set('value', "No Funding Accouts Found!!");
+	        	//		 return;
+	        	//	}
+	    			updateMessageDiv("Fundtion Account Details " , "fe");
+	    			gridStore = new dojo.data.ItemFileWriteStore({data: newData});
+	        	  	   
+	        		console.log(newData);   	    		        		
+	        		        		
+	        		var pgrid = registry.byId('itemGrid'); console.log("pgrid = " + pgrid);
+	                if (pgrid) {
+	                	console.log("destroy pgrid <=> ");
+	                	/*pgrid.destroyRecursive();*/
+	                    pgrid.destroy();
+	                }
+	        		
+	                var pp2 = registry.byId('itemGrid'); console.log("pp2 = " + pp2);
+	                
+	    	    /*    grid = new dojox.grid.EnhancedGrid({
+	    	        	id: "itemGrid",
+	    	        	width: "80%",
+	    	            store: gridStore,
+	    	            structure: gridLayout,  
+	    	        }); */
+	                
+	                grid = new dojox.grid.EnhancedGrid({
+	                    id: "itemGrid",	                    
+	                    store: gridStore,
+	                    structure: gridLayout,	                    
+	                    onDblClick: function(){
+	                    	console.log("asdf ");
+	                    	var selected_index = grid.focus.rowIndex;
+	                    	var selected_item = grid.getItem(selected_index);	                    	
+	                    	var selectedAcct = grid.store.getValue(selected_item, "FUND_ACCT"); 
+	                    	console.log(selectedAcct);
+	                    	displayAllocationItem(selectedAcct);
+	                    	return false;
+	                    },
+	                    width: "100%",
+	                    autoHeight: true});
+	    //grid.startup();
+	        		
+	    	        //var qq = dijit.byId('itemGridDiv');console.log("qq = " + qq);
+	    	        
+	                /*if (qq) {
+	                	require(["dojo/dom"], function(dom){
+	            			dojo.forEach(dijit.findWidgets(dom.byId('itemGridDiv')), function(w) {
+	            		        w.destroyRecursive();
+	            		        });
+	            		});
+	                }	        			
+	    	        
+	                var qq2 = dijit.byId('itemGridDiv');console.log("qq2 = " + qq2);*/
+	                
+	        			        		
+	        		console.log("one = " );
+	        		grid.placeAt("itemGridDiv");
+	    	        grid.startup();
+	    	        
+
+	    	        console.log("two = " );
+	        		
+	      });
+	    },	   
+	    // The error handler
+	    error: function() {
+	    	updateErrorDiv("Error occurred during display Funding Account!!", "fe");
+	    }
+	});
+	
+	
+}
+
+
+function displayAllocationItem(fundAcct){
 				
 	document.getElementById('fe_contentplaceholder1').style.display = 'none';
-		
-	var fundAcct = dijit.byId('Acct').get('value');
+	refreshMesage("fe");
+	gridStore = "";	
+	grid = "";
+//	var fundAcct = dijit.byId('Acct').get('value');
 	var ind;
-	console.log("mess : " + mess);
-	console.log("fftype  :  " + fftype);
+	updateCaptionDiv("Allocation Details");
 	console.log(' finalAccts = ' + fundAcct);
-	
-	if ( fftype !== '' && fftype !== null && fftype > '') {
-		finType = fftype; 	
-		dijit.byId('Acct').set("value",fftype);
-	}			
-	
+
 	console.log(' FT = ' + fundAcct);
 	
 	if ( fundAcct == '' || fundAcct == null ) {		
@@ -29,22 +178,24 @@ function displayFinancialItem(mess, fftype){
 	    	fundAcct: "" + fundAcct,
 	    	ind: "" + "SRCH"
 	    	},
+	    showFooter: true,
 	    // The success callback with result from server
 	    load: function(data) {
 	    	
 	    	var gridData = data;	    	
-	    	    		    	
+	    	i=i+1;    		    	
 	    	require(["dojox/grid/EnhancedGrid",
 	    	         "dojo/data/ItemFileWriteStore",	
 	    	         "dijit/registry",
 	                 "dojo/domReady!"
 	        ], function(EnhancedGrid, ItemFileWriteStore, registry){
-	    		
+	    			showFooter: true;
 	    			var newData  = {	    		
 	    					identifier: "ID",
 	    					items: data.rows
 	    			};
-	        		var gridStore = new dojo.data.ItemFileWriteStore({data: newData});
+	        		
+	    			gridStore = new dojo.data.ItemFileWriteStore({data: newData});
 	        	  	   
 	        		console.log(newData);   	    		        		
 	        		var gridLayout = [];
@@ -52,15 +203,15 @@ function displayFinancialItem(mess, fftype){
 	        		gridLayout.push({ name: "Action", formatter: function(value, index) {
 						var actionLinks = " ";
 						actionLinks += "<a href='javascript:displayEditItemDialog();'>" + "Edit" + "</a>";
-						actionLinks += "&nbsp;|&nbsp;<a href='javascript:displayApproveDialog();'>" + "Delete" + "</a>";
+						actionLinks += "&nbsp;|&nbsp;<a href='javascript:DeleteItemDialog();'>" + "Delete" + "</a>";
 						return actionLinks; }, 
-				  field: "Edit,Approve", width: "20%", align: "center" });  
+					field: "Edit,Approve", width: "20%", align: "center" });  
 	        		
-	        		gridLayout.push({ name: "Funding Account", field: "FUND_ACCT", width: "20%" , align:"center"} ); 
-	        		gridLayout.push({ name: "Trading Account", field: "TRADE_ACCT", width: "20%" , align:"center" } );  
-	        		gridLayout.push({ name: "Allocation Percentage", field: "ACCT_PER", width: "15%" , align:"center" } ); 		        		
-	        		gridLayout.push({ name: "Account Title", field: "ACCT_TITLE", width: "15%" , align:"center" } ); 
-	        		gridLayout.push({ name: "Rec Indicator", field: "IND", width: "15%" , align:"center" } ); 
+	        		gridLayout.push({ name: "Funding Account", field: "FUND_ACCT", width: "20%" , align:"center", editable: false}); 
+	        		gridLayout.push({ name: "Trading Account", field: "TRADE_ACCT", width: "20%" , align:"center", editable: false});  
+	        		gridLayout.push({ name: "Allocation Percentage", field: "ACCT_PER", width: "15%" , align:"center", editable: false}); 
+	        		gridLayout.push({ name: "Account Title", field: "ACCT_TITLE", width: "20%" , align:"center", editable: false}); 
+	        		gridLayout.push({ name: "Rec Indicator", field: "IND", width: "15%" , align:"center", hidden:false }); 
 	        		 
 	        		
 	        		var pgrid = registry.byId('itemGrid'); console.log("pgrid = " + pgrid);
@@ -80,15 +231,21 @@ function displayFinancialItem(mess, fftype){
 	    	        }); */
 	                
 	                grid = new dojox.grid.EnhancedGrid({
-	                    id: "grid",
-	                    jsid: "grid",
+	                    id: "itemGrid",	                    
 	                    store: gridStore,
 	                    structure: gridLayout,
-	                    width: "80%"	                    
-	                }, dojo.byId("itemGridDiv"));
+	                    showFooter: true,
+	                    onBeforeRow: function(){
+	                    	
+	                    },
+	                    onDblClick:function(){
+	                    	console.log("Dobule CLick ink..");
+	                    },
+	                    width: "100%",
+	                    autoHeight: true});
 	    //grid.startup();
 	        		
-	    	        var qq = dijit.byId('itemGridDiv');console.log("qq = " + qq);
+	    	        //var qq = dijit.byId('itemGridDiv');console.log("qq = " + qq);
 	    	        
 	                /*if (qq) {
 	                	require(["dojo/dom"], function(dom){
@@ -100,19 +257,19 @@ function displayFinancialItem(mess, fftype){
 	    	        
 	                var qq2 = dijit.byId('itemGridDiv');console.log("qq2 = " + qq2);*/
 	                
-	        	//	grid.placeAt("itemGridDiv");
-	        		
+	        			        		
 	        		console.log("one = " );
-	        		
+	        		grid.placeAt("itemGridDiv");
 	    	        grid.startup();
 	    	        
+
 	    	        console.log("two = " );
 	        		
 	      });
 	    },
 	    // The error handler
 	    error: function() {
-	        alert("error occurred during display financial item !!!!!!!!!!!");
+	    	updateErrorDiv("Error occurred during display Allocation details!!!", "fe");
 	    }
 	});
 }
@@ -125,89 +282,100 @@ function refreshMesage(obj){
 	});		
 }
 
-function updateMessageDiv(mess,obj){
+function updateErrorDiv(mess,obj){
+	require(["dojo/dom", 
+				"dojo/domReady!" ], function(dom) {
+			var resultDiv = dom.byId("message"+obj);
+			resultDiv.innerHTML = mess.fontcolor("red");
+	});
+}
 
+function updateMessageDiv(mess,obj){
+	require(["dojo/dom", 
+				"dojo/domReady!" ], function(dom) {
+			var resultDiv = dom.byId("message"+obj);
+			resultDiv.innerHTML = mess.fontcolor("blue");
+	});
+}
+
+function updateCaptionDiv(mess){
+	require(["dojo/dom", 
+				"dojo/domReady!" ], function(dom) {
+			var resultDiv = dom.byId("gridCaption");
+			resultDiv.innerHTML = mess;
+	});
+}
+function DeleteItemDialog(){
+	
+	var selected_index = grid.focus.rowIndex;
+	var selected_item = grid.getItem(selected_index);
+	
+	var rowID = grid.store.getValue(selected_item, "ID"); 
+	console.log("appcode = " + rowID);
+	
+			
+	var fundAcct = grid.store.getValue(selected_item, "FUND_ACCT");
+	var tradeAcct = grid.store.getValue(selected_item, "TRADE_ACCT");
+	var alloc = grid.store.getValue(selected_item, "ACCT_PER");
+	var acctTitle = grid.store.getValue(selected_item, "ACCT_TITLE");
+	var updateIND = "D";
+	
+    grid.store.deleteItem(selected_item);
+    
 }
 
 function displayEditItemDialog(){
 	
-	refreshMesage("fe");	
-		
+			
 	var selected_index = grid.focus.rowIndex;
 	var selected_item = grid.getItem(selected_index);
 	
-	var editcode = grid.store.getValue(selected_item, "NTRY_STAT_CD"); 
+	var editcode = grid.store.getValue(selected_item, "ID"); 
 	console.log("editcode = " + editcode);	
 	
-	dijit.byId("editDg3").set('disabled', false);
-	dijit.byId("commentDg3").set('disabled', false);
+				
+	dijit.byId("fundAcctE").set('value', grid.store.getValue(selected_item, "FUND_ACCT"));
+	dijit.byId("tradeAcctE").set('value', grid.store.getValue(selected_item, "TRADE_ACCT"));  
+	dijit.byId("percentE").set('value', grid.store.getValue(selected_item, "ACCT_PER"));
+	dijit.byId("AcctTitleE").set('value', grid.store.getValue(selected_item, "ACCT_TITLE"));
 	
-	if ( editcode == 'Approved' ) {
-		dijit.byId("editDg3").set('disabled', true);	
-		dijit.byId("commentDg3").set('disabled', true);	
-	}	
-			
-	dijit.byId("feType3").set('value', grid.store.getValue(selected_item, "FNTRY_TX"));
-	dijit.byId("dateDg3").set('value', grid.store.getValue(selected_item, "EFF_STRT_DT"));  
 	
-	dijit.byId("feType3").set('disabled', true);
-	dijit.byId("dateDg3").set('disabled', true);
+	dijit.byId("fundAcctE").set('disabled', true);
+	dijit.byId("AcctTitleE").set('disabled', true);
 		
-	dijit.byId("hidKey").set('value', grid.store.getValue(selected_item, "FNTRY_TY_CD"));  	
-	dijit.byId("commentDg3").set('value', grid.store.getValue(selected_item, "CMNT_TX"));
-	
-	
-	
-	
-	for (var i = 1 ; i < 18  ; i++)	{
-		if (grid.store.getValue(selected_item, "FNTRY_PARM_TX"+i) > ' ') {
-			var vartext2 = "FNTRY_PARM_TX"+i; 
-			var varamt2 = "MAN_NTRY_AM"+i; 
-			var varcode2 = "FNTRY_PARM_TY_CD"+i; 
-			console.log("varcode2 = " + varcode2);
-						
-			if (dijit.byId("manNtryAm"+i) != null ) {
-				var v5grid = dijit.byId("manNtryAm"+i); console.log("v5grid = " + v5grid);
-				if (v5grid) {
-					v5grid.destroy();
-				}
-			}							
-						
-			var x = document.createElement("LABEL");
-		    var t = document.createTextNode(grid.store.getValue(selected_item, "FNTRY_PARM_TX"+i));
-		    x.appendChild(t);  
-		    x.setAttribute("class", "dialogLabel"); 
-		    x.setAttribute("id", "fntryParmTx"+i); 
-		    document.getElementById("varpara").appendChild(x);
-		    		    
-		    var y = document.createElement("INPUT");
-		    y.setAttribute("data-dojo-type", "dijit/form/ValidationTextBox");
-		    y.setAttribute("data-dojo-props", "regExp: '[[0-9]+(\.[0-9]{1,2})?]', invalidMessage: 'The value entered must be numeric with 2 digits after decimal.'" );
-		    /*y.setAttribute("type", "text");*/
-		    y.setAttribute("value", grid.store.getValue(selected_item, "MAN_NTRY_AM"+i).trim().replace(/\,/g,''));
-		    y.setAttribute("class", "ruleElement"); 
-		    y.setAttribute("id", "manNtryAm"+i); 
-		    y.setAttribute("disabled", "false");
-		    if ( editcode == 'Approved' ) {
-		    	 y.setAttribute("disabled", "true");
-			}			    
-		    document.getElementById("varpara").appendChild(y); 			      
-		    
-		    var h = document.createElement("INPUT");
-		    h.setAttribute("type", "hidden");
-		    h.setAttribute("value", grid.store.getValue(selected_item, "FNTRY_PARM_TY_CD"+i));
-		    h.setAttribute("id", "fntryParmTyCd"+i); 
-		    document.getElementById("varpara").appendChild(h); 		    
-		    
-			}
-	};
-	
-	require(["dojo/parser"], function(parser){
-    	parser.parse("varpara");
-    	});	
-    	
+	//dijit.byId("hidKey").set('value', grid.store.getValue(selected_item, "FNTRY_TY_CD"));  	
+//	dijit.byId("commentDg3").set('value', grid.store.getValue(selected_item, "CMNT_TX"));	   	
 		
 	itemDialogDiv3.show();	
+	
+}
+
+function EditDialogSave(){
+	
+	var selected_index = grid.focus.rowIndex;
+	var selected_item = grid.getItem(selected_index);
+		
+	var i = grid.rowCount + 1;//grid.store.newItem({});
+	
+	var fAcct = dijit.byId('fundAcctE').get('value');
+	var tAcct = dijit.byId('tradeAcctE').get('value');
+	var alloc = dijit.byId('percentE').get('value');
+	var acctTitle = dijit.byId('AcctTitleE').get('value');
+	var title = ""; 
+    var Id = grid.store.recordCount;
+    
+
+	
+	var editcode = grid.store.getValue(selected_item, "ID"); 
+	console.log("editcode = " + editcode);	
+	
+				
+	grid.store.setValue(selected_item, "FUND_ACCT", fAcct);
+	grid.store.setValue(selected_item, "TRADE_ACCT", tAcct);  
+	grid.store.setValue(selected_item, "ACCT_PER", alloc);
+	grid.store.setValue(selected_item, "ACCT_TITLE", acctTitle);
+	grid.store.setValue(selected_item, "IND", "U");
+	itemDialogDiv3.hide();
 	
 }
 
@@ -513,25 +681,6 @@ function cancelDialog2(){
 }
 
 function cancelDialog3(){
-	require(["dojo/dom"], function(dom){
-		dojo.forEach(dijit.findWidgets(dom.byId('varlabelhtml')), function(w) {
-	        w.destroyRecursive();
-	        });
-	});
-	
-	var myNode = document.getElementById("varpara");
-	while (myNode.firstChild) {
-	  	    myNode.removeChild(myNode.firstChild);
-	}
-	
-	for (var i = 1 ; i < 18  ; i++)	{
-		if (dijit.byId("manNtryAm"+i) != null ) {
-			var v3grid = dijit.byId("manNtryAm"+i); console.log("v3grid = " + v3grid);
-			if (v3grid) {
-				v3grid.destroy();
-			}
-		}	
-	}
 		
 	itemDialogDiv3.hide();
 }
@@ -621,6 +770,79 @@ function addDialog1(){
 
 }
 
+
+function validateAcctTitle(fundAcct, tradeAcct, indValue)
+{
+	var ind; 
+	$(".loading").show(); 
+		$.ajax({
+            type: "POST",
+            url:"JMServlet",
+            async:false,
+            dataType: "json",
+			data:{
+				"ind": indValue,
+				"fundAcct": fundAcct,
+				"tradeAcct": tradeAcct
+			},
+			 beforeSend: function () {
+	                $(".loading").show();  
+	            },
+	        jsonReader:{
+	  	           root: 'status',
+	  	           repeatitems : false
+	  		},
+            success: function (data) {
+            	var JSONData = JSON.stringify(data);
+            	var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+            	if(arrData.status=="Y"){
+            		//alert(arrData.status);
+            		if(indValue=="acctValid")
+            		{
+            			document.getElementById("errorText").innerHTML = "Valid Account!".fontcolor('green');     
+	            		ind= true;
+            		}else
+            		{
+            			document.getElementById("errorText").innerHTML = "Account Title is matching with Funding Account.".fontcolor('green');     
+	            		ind= true;
+            		}
+            		
+            		
+            	}
+            	else{
+            		//alert(arrData.status);
+            		if(indValue=="acctValid")
+            		{
+            		//	alert( "Account is not Valid!!");
+	            		document.getElementById("errorText").innerHTML = "Invalid Account!!".fontcolor('red');
+	            		ind=false;
+            		}
+            		else{
+            	//		alert( "Account Title not matching with Funding Account.");
+	            		document.getElementById("errorText").innerHTML = "Account Title not matching with Funding Account.".fontcolor('red');
+	            		ind=false;
+            		}
+            		
+            	}
+            	
+            	
+            },
+           
+	        complete: function (data){
+	        	 $(".loading").hide(); 
+	        }
+	});
+	
+	if(ind){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+
+
 function addDialog2(){
 	
 	var fecode1 = dijit.byId('fecode1').get('value');
@@ -709,30 +931,106 @@ else{
 
 }
 
-function getCodeValues(){
-	
-	var counter = dijit.byId('labelctr').get('value'); 
-	console.log("labelctr = " + counter); 
-		
-	var parmlist = "";
-	
-	for (var i = 0 ; i < counter  ; i++){
-		
-		var pcode = "parmty" + i; 
-		var pvalue = "parmtext" + i; 
-		console.log(pcode);console.log(pvalue);  
-		
-		if (parmlist == ""){
-			parmlist += dijit.byId(pcode).get('value').trim() + ";" + dijit.byId(pvalue).get('value').trim();				
-		}
-		else{
-			parmlist += "/" + dijit.byId(pcode).get('value').trim() + ";" + dijit.byId(pvalue).get('value').trim();		
-		}
+function alphanumeric(value, options, rowObject)
+{ 
+	//alert(rowObject);
+	try{
+	if(value.length!=9 || value=="")
+	{
+		return [false, "Please Enter Valid Account!!"];
 	}
-	console.log(parmlist); 
+	else{
+		var letterNumber = /^[0-9a-zA-Z]+$/;  
+		if((value.match(letterNumber)))
+		{  
+			return [true, ""];  
+		}
+		else
+		{   
+		//alert("The account number should be alpha numeric");   
+			return [false, " Please Enter Valid Account!! '" + colname + "'\n The account number should be alpha numeric"];  
+		}  
+	}
+	}
+	catch(err){
+		console.log(err);
+		return false;
+	}
+} 
+
+
+function percent(value, colname)
+{
+	if(value > 100.00 || value=="")
+	{
+		 
+		return [false, "Percentage can not be Blank or more than 100, Please check!!"];
+	}
+	else{	
+		return [true, ""];  
+	}
 	
-	return parmlist;
 }
+
+function isAlphanumeric(fundAcct)
+{ 
+	var letterNumber = /^[0-9a-zA-Z]+$/;  
+	if((fundAcct.match(letterNumber)))
+	{  
+		return true;  
+	}
+	else
+	{   
+		//alert("The account number should be alpha numeric");   
+		return false;   
+	}  
+} 
+
+function validateAcct(fundAcct)
+{
+	try{
+	if(fundAcct.length!=9 || fundAcct=="") 
+	{		
+		return false;
+	}
+	else
+	{	
+		if(isAlphanumeric(fundAcct))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	}
+	}
+	catch(err){
+		return false;
+	}
+}	
+
+function validateIBDoffice(office)
+{
+	if(office.length!=3 || office=="") 
+	{		
+		return false;
+	}
+	else
+	{	
+		if(isAlphanumeric(office))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	}
+}	
+
 
 function clearAllFinancialItem(){	
 
@@ -741,8 +1039,6 @@ function clearAllFinancialItem(){
 	dijit.byId("ofc").set('value', "");
 	dijit.byId("ips").set('value', "");
 	
-		
-	refreshMesage("fe");
 	
 	require(["dijit/registry"], function(registry){
 		var pcgrid = registry.byId('itemGrid'); console.log("pcgrid = " + pcgrid);
