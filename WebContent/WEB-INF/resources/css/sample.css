@@ -129,7 +129,7 @@ html {
 
 .grid{
 	height: 40%;
-	width: 95%;
+	width: 100%;
 	float: left;
 }
 
@@ -143,6 +143,15 @@ html {
 	height: 400px;
 	width: 600px;
 	overflow:hidden;
+}
+
+.status{
+	font-family:Verdana, Arial, sans-serif; 
+	font-weight:bold; 
+	color: blue; 
+	font-size:8pt;
+	align:"left";
+	border: 1px solid #7B98C4;
 }
 
 .mainHeader{
@@ -186,7 +195,7 @@ li.activelink:hover {
 	text-align:center;  
 	font-size:90%;
 	width: 99.5%; 
-	height: 200px;
+	height: 300px;
 	color: grey; 
 	background: #E3E3E3;
 	padding-top:80px; 
